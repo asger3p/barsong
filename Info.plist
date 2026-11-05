@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key><string>dev.asger.Barsong</string>
+    <key>CFBundleName</key><string>Barsong</string>
+    <key>CFBundleExecutable</key><string>Barsong</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>1.0</string>
+    <key>CFBundleVersion</key><string>1</string>
+    <key>LSMinimumSystemVersion</key><string>13.0</string>
+    <key>LSUIElement</key><true/>
+    <key>NSAudioCaptureUsageDescription</key><string>Listens to Spotify's audio to draw the live visualizer. Nothing is recorded or saved.</string>
+    <key>NSAppleEventsUsageDescription</key><string>Reads the current track and artwork from Spotify and sends play/pause/skip commands.</string>
+</dict>
+</plist>

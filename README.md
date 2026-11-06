@@ -43,9 +43,19 @@ Barsong is an independent project, not affiliated with or endorsed by Spotify.
 The visualizer column sits to the right of the full player. Switch visuals with the **‹ ›** arrows above it, by clicking the visual itself, or under Settings → Player.
 
 - **Full screen:** hover the visual and click the expand button in its corner. It opens a full-screen view with the player on the left and every visual at once. Click a visual to show it large; **All visuals** goes back to the grid; Esc leaves full screen.
-- **How it hears:** Barsong listens to Spotify's own audio, nothing else, and only while the visualizer is on screen and the music plays.
 - **Pausing:** freezes the picture exactly as it was, so you can study it, and listening stops until you press play.
 - **Requirements:** macOS 14.2 or later and the System Audio Recording permission (see [First run](#first-run)).
+
+### How the data is collected
+
+Every visual is drawn from the same audio and the same analysis pass — one pipeline, not nine.
+
+- **Capture:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes, mixed to stereo, inside a private aggregate device on your current output device. Spotify plays on untouched, nothing else is tapped, and nothing is recorded or saved. Barsong listens only while a visual is on screen and the music plays; pausing removes the tap, and a new track restarts the loudness, key and tempo measurements.
+- **Every chunk of audio** (a few milliseconds, straight from the audio device): peak and RMS levels, the stereo scope's points, correlation and balance, and the loudness meter — K-weighted per sample to ITU-R BS.1770, in 100 ms hops (momentary 400 ms, short-term 3 s, gated integrated, one history point every 0.2 s).
+- **From a Hann-windowed 4096-sample window** (~11.7 Hz per bin at 48 kHz): the spectrum curve (192 log-spaced bands over 20 Hz–20 kHz, tilted +3 dB per octave, rising fast and falling back gently), the waveform, triggered on a rising zero crossing of a low-passed copy, and the spectral flux the tempo is read from. Waveform snapshots are stacked 30 a second, spectra 20 a second.
+- **Sixty times a second**, three windows at once — 16384, 8192 and 4096 samples: one spectrogram column of 512 log-spaced rows from 30 Hz to 16 kHz, each row read at the resolution meant for its frequency. The longest window also gives the note strengths, summing bins from 55 Hz to 2 kHz onto the 12 pitch classes, which feed the chromagram and, averaged over ~15 s, the key.
+- **Tempo:** onset strength resampled onto a 100 Hz grid, autocorrelated over the last 8 seconds between 60 and 200 BPM, re-estimated twice a second.
+- **It is Spotify's output** that gets measured, after Spotify's volume and **Normalize volume** settings — which is why the loudness meter asks for 100%.
 
 ### Spectrum analyzer
 A smooth, filled frequency curve from 20 Hz to 20 kHz over a log grid (50, 100, 200, 500, 1k, 2k, 5k, 10k), like the analyzer in a studio EQ. A thin white line holds recent peaks and sinks slowly.

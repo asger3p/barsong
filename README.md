@@ -50,7 +50,7 @@ The visualizer column sits to the right of the full player. Switch visuals with 
 
 Every visual is drawn from the same audio and the same analysis pass.
 
-- **Capture:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes, mixed to stereo, inside a private aggregate device on your current output device. Spotify plays on untouched, nothing else is tapped, and nothing is recorded or saved. Barsong listens only while a visual is on screen and the music plays; pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
+- **Capture:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes, mixed to stereo, inside a private aggregate device on your current output device. A tap means the system hands Barsong a copy of the audio those processes send to your output device: nothing is heard through a microphone, and no other app's sound is in the stream. Spotify plays on untouched, nothing else is tapped, and nothing is recorded or saved. Barsong listens only while a visual is on screen and the music plays; pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
 - **Every chunk of audio** (a few milliseconds, straight from the audio device): peak and RMS levels, the stereo scope's points, correlation and balance, and the loudness meter — K-weighted per sample to ITU-R BS.1770, in 100 ms hops (momentary 400 ms, short-term 3 s, gated integrated, one history point every 0.2 s).
 - **From a Hann-windowed 4096-sample window** (~11.7 Hz per bin at 48 kHz): the spectrum curve (192 log-spaced bands over 20 Hz–20 kHz, tilted +3 dB per octave, rising fast and falling back gently), the waveform, triggered on a rising zero crossing of a low-passed copy, and the spectral flux the tempo is read from. Waveform snapshots are stacked 30 a second, spectra 20 a second.
 - **Sixty times a second**, three windows at once — 16384, 8192 and 4096 samples: one spectrogram column of 512 log-spaced rows from 30 Hz to 16 kHz, each row read at the resolution meant for its frequency. The longest window also gives the note strengths, summing bins from 55 Hz to 2 kHz onto the 12 pitch classes, which feed the chromagram and, averaged over ~15 s, the key.
@@ -98,8 +98,8 @@ Barsong is built from source.
 
 macOS asks for two permissions:
 
-- **"Barsong wants to control Spotify"**: needed to read the current song and cover, and to play, pause, skip, seek and change the volume. Barsong never launches Spotify by itself.
-- **System Audio Recording**: only asked when the visualizer first opens. Barsong listens to Spotify's audio alone, only while the visualizer is on screen, and records or saves nothing.
+- **"Barsong wants to control Spotify"**: needed to read the current song and cover, and to play, pause, skip, seek and change the volume. Barsong doesn't start Spotify on its own: it only launches it if you click the cover or title while nothing is playing.
+- **System Audio Recording**: only asked when the visualizer first opens. It lets Barsong tap Spotify's own processes (see [How the data is collected](#how-the-data-is-collected)). Spotify keeps playing normally, no other app's audio is included, and nothing is recorded or saved.
 
 Both can be changed later in macOS System Settings → Privacy & Security.
 
@@ -113,13 +113,18 @@ Liked Songs and the artist and album links use the Spotify Web API. Each user si
 
 ## Privacy
 
-- **Lyrics:** the artist, title, album and length of the current song are sent to [LRCLIB](https://lrclib.net), and to NetEase when LRCLIB has no synced lyrics.
-- **Spotify:** Liked Songs and the artist and album links talk to Spotify's Web API with your own developer app.
-- **Covers:** downloaded from Spotify's image servers.
-- **Everything else stays on your Mac:**
-  - Settings and your Client ID are kept in the app's preferences.
-  - The sign-in is kept in your Keychain.
-  - Audio is analysed live in memory and never stored or sent anywhere.
+Barsong talks to four places, and only these:
+
+- **[LRCLIB](https://lrclib.net)** (lyrics): the artist, title, album and length of the current song. If that finds no synced lyrics, a second request sends just the artist and title to its search endpoint. These requests identify themselves as `Barsong/1.0`.
+- **NetEase** (fallback lyrics, only when LRCLIB has none): the artist and title as one search string, then the id of the matching song — no album, no length. Note that these requests send a generic browser User-Agent rather than naming Barsong.
+- **Spotify's Web API** (Liked Songs, artist and album links): track, artist and album ids, with the token from your own developer app.
+- **Spotify's image servers**: the cover, from whatever URL Spotify reports for the current track.
+
+Everything else stays on your Mac:
+
+- Settings and your Client ID are kept in the app's preferences, which are not encrypted.
+- The Spotify refresh token is kept in your Keychain. Access tokens are held in memory only.
+- Audio is analysed live in memory and never stored or sent anywhere.
 
 ## Troubleshooting
 

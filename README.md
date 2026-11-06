@@ -10,7 +10,7 @@ Barsong is an independent project, not affiliated with or endorsed by Spotify.
 
 **Menu bar**
 - The album cover and "Artist – Title" (or "Title – Artist", title only, or just the cover). A pause badge shows while paused.
-- One click on **+** adds the song to Liked Songs; the check mark removes it.
+- One click on **+** adds the song to Liked Songs; the check mark removes it. The button only appears once a Spotify account is connected (see [Connect your Spotify account](#connect-your-spotify-account)).
 - A lyrics button turns the floating lyrics on.
 - Optional pill background, plain or tinted with the cover's colours.
 

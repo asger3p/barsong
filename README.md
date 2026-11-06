@@ -2,7 +2,7 @@
 
 Spotify in your Mac's menu bar: the cover and the song up top, a one-click like, a player a click away, synced lyrics under the notch, and studio-style analysis of what you're hearing.
 
-Barsong is an independent project, not affiliated with or endorsed by Spotify.
+Barsong is an independent project, not affiliated with or endorsed by Spotify. There's no prebuilt download: it's built from source with one command (see [Install](#install)).
 
 ![The menu bar item with the cover, song and like button, and synced lyrics floating underneath](docs/screenshots/menu-bar-and-lyrics.png)
 
@@ -31,12 +31,12 @@ Barsong is an independent project, not affiliated with or endorsed by Spotify.
 - Lyrics come from LRCLIB, with NetEase as a fallback.
 
 **Visualizer**
-- Studio-style analysis of Spotify's audio beside the player: spectrum, spectrogram, scopes, level and loudness meters, and key. See [Visualizers](#visualizers) below.
+- Studio-style analysis of Spotify's audio beside the player: spectrum, spectrogram, scopes, level and loudness meters, and key. See [Visualizer](#visualizer) below.
 
 **General**
 - Open at login.
 
-## Visualizers
+## Visualizer
 
 ![Full screen: the player beside all nine visuals, from the spectrum analyzer to the chromagram](docs/screenshots/full-screen-visualizers.jpg)
 
@@ -48,14 +48,10 @@ The visualizer column sits to the right of the full player. Switch visuals with 
 
 ### How the data is collected
 
-Every visual is drawn from the same audio and the same analysis pass.
-
-- **Capture:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes, mixed to stereo, inside a private aggregate device on your current output device. A tap means the system hands Barsong a copy of the audio those processes send to your output device: nothing is heard through a microphone, and no other app's sound is in the stream. Spotify plays on untouched, nothing else is tapped, and nothing is recorded or saved. Barsong listens only while a visual is on screen and the music plays; pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
-- **Every chunk of audio** (a few milliseconds, straight from the audio device): peak and RMS levels, the stereo scope's points, correlation and balance, and the loudness meter — K-weighted per sample to ITU-R BS.1770, in 100 ms hops (momentary 400 ms, short-term 3 s, gated integrated, one history point every 0.2 s).
-- **From a Hann-windowed 4096-sample window** (~11.7 Hz per bin at 48 kHz): the spectrum curve (192 log-spaced bands over 20 Hz–20 kHz, tilted +3 dB per octave, rising fast and falling back gently), the waveform, triggered on a rising zero crossing of a low-passed copy, and the spectral flux the tempo is read from. Waveform snapshots are stacked 30 a second, spectra 20 a second.
-- **Sixty times a second**, three windows at once — 16384, 8192 and 4096 samples: one spectrogram column of 512 log-spaced rows from 30 Hz to 16 kHz, each row read at the resolution meant for its frequency. The longest window also gives the note strengths, summing bins from 55 Hz to 2 kHz onto the 12 pitch classes, which feed the chromagram and, averaged over ~15 s, the key.
-- **Tempo:** onset strength resampled onto a 100 Hz grid, autocorrelated over the last 8 seconds between 60 and 200 BPM, re-estimated twice a second.
-- **It is Spotify's output** that gets measured, after Spotify's volume and **Normalize volume** settings — which is why the loudness meter asks for 100%.
+- **What a tap is:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes. The system hands Barsong a copy of the audio those processes send to your output device: nothing is heard through a microphone, no other app's sound is in the stream, and Spotify plays on untouched.
+- **When it listens:** only while a visual is on screen and the music plays. Pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
+- **What is done with it:** every visual is drawn from one analysis pass over that audio — the levels and the loudness meter from each chunk as it arrives, the spectrum, waveform, spectrogram, notes, key and tempo from short windows of it (4096 samples for the spectrum and waveform; 16384, 8192 and 4096 together for the spectrogram and the notes), up to sixty times a second.
+- **What gets measured** is Spotify's output, after its volume and **Normalize volume** settings — which is why the loudness meter asks for 100%.
 
 ## Requirements
 
@@ -82,7 +78,7 @@ If you'd rather skip the checks, `./build.sh` does the build and install on its 
 macOS asks for two permissions:
 
 - **"Barsong wants to control Spotify"**: needed to read the current song and cover, and to play, pause, skip, seek and change the volume. Barsong doesn't start Spotify on its own: it only launches it if you click the cover or title while nothing is playing.
-- **System Audio Recording**: only asked when the visualizer first opens. It lets Barsong tap Spotify's own processes (see [How the data is collected](#how-the-data-is-collected)). Spotify keeps playing normally, no other app's audio is included, and nothing is recorded or saved.
+- **System Audio Recording**: only asked when the visualizer first opens. It lets Barsong tap Spotify's own processes (see [How the data is collected](#how-the-data-is-collected)); Spotify keeps playing normally and no other app's audio is included.
 
 Both can be changed later in macOS System Settings → Privacy & Security.
 
@@ -96,10 +92,11 @@ Liked Songs and the artist and album links use the Spotify Web API. Each user si
 
 ## Privacy
 
-Barsong talks to four places, and only these:
+Barsong talks to five places, and only these:
 
 - **[LRCLIB](https://lrclib.net)** (lyrics): the artist, title, album and length of the current song. If that finds no synced lyrics, a second request sends just the artist and title to its search endpoint. These requests identify themselves as `Barsong/1.0`.
 - **NetEase** (fallback lyrics, only when LRCLIB has none): the artist and title as one search string, then the id of the matching song — no album, no length. These requests identify themselves as `Barsong/1.0` too.
+- **Spotify's accounts service** (signing in): the one-time code from the browser and your refresh token, exchanged there for the access tokens the Web API needs.
 - **Spotify's Web API** (Liked Songs, artist and album links): track, artist and album ids, with the token from your own developer app.
 - **Spotify's image servers**: the cover, from whatever URL Spotify reports for the current track.
 

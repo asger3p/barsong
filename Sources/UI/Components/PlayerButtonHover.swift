@@ -6,7 +6,7 @@ import SwiftUI
 ///
 /// Pair it with `pointingHandCursor()`, which marks the button as clickable.
 struct PlayerButtonHover: ViewModifier {
-    static let scale: CGFloat = 1.12
+    static let scale: CGFloat = 1.15
     static let animation = Animation.easeOut(duration: 0.12)
 
     /// The icon's colour at rest and while hovered. Nil leaves the icon's own colour alone,
@@ -41,7 +41,9 @@ extension View {
         modifier(PlayerButtonHover(colors: (resting, hovered)))
     }
 
-    /// Grows a touch while hovered, leaving the icon's colour as it is.
+    /// Grows a touch while hovered, leaving the icon's colour as it is. Only for an icon
+    /// that carries its own colour in every state; anything else wants the brightening above,
+    /// because 15% on a glyph is a couple of pixels and easy to miss on its own.
     func playerButtonHover() -> some View {
         modifier(PlayerButtonHover(colors: nil))
     }

@@ -33,6 +33,16 @@ struct LikedSongsTests {
         #expect(library.calls.isEmpty)
     }
 
+    @Test func showsTheLikeButtonOnlyWhileConnected() {
+        let (connected, _) = makeLikedSongs()
+        #expect(connected.canLikeCurrentTrack)
+        #expect(connected.showsLikeButton)
+
+        let (disconnected, _) = makeLikedSongs(connected: false)
+        #expect(disconnected.canLikeCurrentTrack)
+        #expect(!disconnected.showsLikeButton)
+    }
+
     @Test func likingSavesTheTrack() async {
         let (likedSongs, _) = makeLikedSongs()
         await likedSongs.refreshCurrentTrack()

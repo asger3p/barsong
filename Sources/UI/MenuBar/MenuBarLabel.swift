@@ -6,6 +6,8 @@ import SwiftUI
 struct MenuBarLabel: View {
     @ObservedObject var nowPlaying: NowPlaying
     @ObservedObject var likedSongs: LikedSongs
+    /// Observed so the like icon appears and disappears with the connection.
+    @ObservedObject var account: SpotifyAccount
     @ObservedObject var lyrics: LyricsSession
     @ObservedObject var preferences: Preferences
 
@@ -16,7 +18,7 @@ struct MenuBarLabel: View {
                 if let text = preferences.menuBarTextStyle.text(for: track, maxLength: Int(preferences.maxTextLength)) {
                     Text(text)
                 }
-                if preferences.showLikeButton && likedSongs.canLikeCurrentTrack {
+                if preferences.showLikeButton && likedSongs.showsLikeButton {
                     Image(systemName: likedSongs.isCurrentTrackLiked == true ? "checkmark.circle.fill" : "plus.circle")
                         .frame(width: MenuBarLayout.trailingIconWidth)
                 }

@@ -4,6 +4,7 @@ import SwiftUI
 
 /// Connecting a Spotify account for Liked Songs, as a guided setup: create a Spotify app
 /// with the values shown, paste its Client ID (it connects by itself), approve in the browser.
+/// Step 3 also has a Connect button, for when that automatic attempt didn't happen or failed.
 struct AccountSettings: View {
     @ObservedObject var account: SpotifyAccount
 
@@ -93,9 +94,21 @@ struct AccountSettings: View {
             }
 
             SetupStep(number: 3, title: "Approve in the browser") {
-                EmptyView()
+                Button("Connect") {
+                    Task { await account.connect() }
+                }
+                .disabled(!hasClientID)
+                .pointingHandCursor()
+                Text("Opens Spotify in your browser to approve \(AppInfo.name). It starts by itself once the Client ID is in; this button is for trying again.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    private var hasClientID: Bool {
+        !account.clientID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func pasteClientID() {

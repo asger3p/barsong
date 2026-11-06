@@ -10,18 +10,22 @@ struct PanelCornerButtons: View {
     var body: some View {
         // Vertical arrows: the switch changes the player's height. (Diagonal arrows mean full screen.)
         let isCompact = preferences.compactPlayer
+        let pinned = preferences.pinPlayer
         IconButton(
             symbol: isCompact ? "rectangle.expand.vertical" : "rectangle.compress.vertical",
             help: isCompact ? "Full player" : "Compact player"
         ) { preferences.compactPlayer.toggle() }
         Button { preferences.pinPlayer.toggle() } label: {
-            Image(systemName: preferences.pinPlayer ? "pin.fill" : "pin")
+            Image(systemName: pinned ? "pin.fill" : "pin")
                 .font(.system(size: 13))
-                .foregroundStyle(preferences.pinPlayer ? AnyShapeStyle(Color(preferences.accentColor)) : AnyShapeStyle(.secondary))
         }
         .buttonStyle(.plain)
-        .help(preferences.pinPlayer ? "Unpin (close when clicking elsewhere)" : "Pin open")
+        .help(pinned ? "Unpin (close when clicking elsewhere)" : "Pin open")
         .pointingHandCursor()
+        .playerButtonHover(
+            from: pinned ? Color(preferences.accentColor) : .secondary,
+            to: pinned ? Color(preferences.accentColor) : .primary
+        )
         IconButton(symbol: "gearshape", help: "Settings", action: openSettings)
         IconButton(symbol: "power", help: "Quit \(AppInfo.name)") { NSApp.terminate(nil) }
     }
@@ -80,8 +84,8 @@ struct VisualizerStepper: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.secondary)
         .help(help)
         .pointingHandCursor()
+        .playerButtonHover(from: .secondary)
     }
 }

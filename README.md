@@ -110,20 +110,17 @@ Which notes are sounding, as 12 rows (C at the bottom to B at the top, any octav
 
 ## Install
 
-Barsong is built from source.
+Barsong is built from source. Clone it and run the installer:
 
-1. Install Xcode 16 or later, or just its command line tools:
-   ```sh
-   xcode-select --install
-   ```
-2. Clone and build:
-   ```sh
-   git clone https://github.com/asger3p/barsong.git
-   cd barsong
-   ./build.sh
-   ```
+```sh
+git clone https://github.com/asger3p/barsong.git
+cd barsong
+./install.sh
+```
 
-`build.sh` builds the app, installs it to `~/Applications/Barsong.app` and opens it. Run it again to update.
+That's all of it. `install.sh` checks that you're on a new enough macOS and that the Xcode command line tools are there — starting Apple's installer for you if they aren't — then builds the app, installs it to `~/Applications/Barsong.app` and opens it. Run it again to update.
+
+If you'd rather skip the checks, `./build.sh` does the build and install on its own.
 
 ## First run
 

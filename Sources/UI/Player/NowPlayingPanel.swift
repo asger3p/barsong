@@ -156,7 +156,7 @@ struct CompactPlayer: View {
                     .font(.caption)
             }
             .frame(width: 150, alignment: .leading)
-            if likedSongs.canLikeCurrentTrack && account.isConnected {
+            if likedSongs.showsLikeButton {
                 LikeButton(likedSongs: likedSongs, size: 18)
             }
             VStack(spacing: 4) {

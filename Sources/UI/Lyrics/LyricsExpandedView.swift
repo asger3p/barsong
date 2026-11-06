@@ -8,6 +8,9 @@ struct LyricsExpandedView: View {
     @ObservedObject var preferences: LyricsPreferences
     @ObservedObject var nowPlaying: NowPlaying
     @ObservedObject var state: LyricsWindowState
+    @ObservedObject var likedSongs: LikedSongs
+    /// Observed so the like button appears and disappears with the connection.
+    @ObservedObject var account: SpotifyAccount
 
     static let shadowMargin: CGFloat = 12
     private static let cornerRadius: CGFloat = 22
@@ -43,6 +46,7 @@ struct LyricsExpandedView: View {
             }
             .lineLimit(1)
             Spacer(minLength: 12)
+            LyricsLikeButton(likedSongs: likedSongs, account: account, state: state, textColor: textColor, size: 13)
             LyricsWindowControls(lyrics: lyrics, preferences: preferences, state: state, size: 12)
         }
         .padding(.leading, 24)
@@ -146,11 +150,16 @@ struct LyricsWindowRootView: View {
     @ObservedObject var preferences: LyricsPreferences
     let nowPlaying: NowPlaying
     let state: LyricsWindowState
+    let likedSongs: LikedSongs
+    let account: SpotifyAccount
 
     var body: some View {
         Group {
             if preferences.isExpanded {
-                LyricsExpandedView(lyrics: lyrics, preferences: preferences, nowPlaying: nowPlaying, state: state)
+                LyricsExpandedView(
+                    lyrics: lyrics, preferences: preferences, nowPlaying: nowPlaying, state: state,
+                    likedSongs: likedSongs, account: account
+                )
             } else {
                 LyricsPillView(lyrics: lyrics, preferences: preferences, nowPlaying: nowPlaying, state: state)
             }

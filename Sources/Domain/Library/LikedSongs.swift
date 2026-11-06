@@ -33,6 +33,10 @@ package final class LikedSongs: ObservableObject {
     /// The like button only makes sense for catalogue songs and episodes.
     package var canLikeCurrentTrack: Bool { nowPlaying.track?.canBeSaved == true }
 
+    /// Whether to show a like button at all. Without a connected Spotify account there is
+    /// nothing to like with, so the button is hidden rather than shown doing nothing.
+    package var showsLikeButton: Bool { canLikeCurrentTrack && account.isConnected }
+
     package func refreshCurrentTrack() async {
         await refresh(for: nowPlaying.track)
     }

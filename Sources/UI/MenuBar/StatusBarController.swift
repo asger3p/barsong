@@ -23,12 +23,16 @@ package final class StatusBarController: NSObject {
     package init(models: AppModels) {
         self.models = models
         label = ClickThroughHostingView(rootView: MenuBarLabel(
-            nowPlaying: models.nowPlaying, likedSongs: models.likedSongs, lyrics: models.lyrics, preferences: models.preferences
+            nowPlaying: models.nowPlaying, likedSongs: models.likedSongs, account: models.account,
+            lyrics: models.lyrics, preferences: models.preferences
         ))
         super.init()
         setUpPopover()
         guard let button = statusItem.button else { return }
-        lyricsWindow = LyricsWindowController(lyrics: models.lyrics, preferences: models.lyricsPreferences, nowPlaying: models.nowPlaying)
+        lyricsWindow = LyricsWindowController(
+            lyrics: models.lyrics, preferences: models.lyricsPreferences, nowPlaying: models.nowPlaying,
+            likedSongs: models.likedSongs, account: models.account
+        )
         setUpButton(button)
         observeModels()
         updateLength()
@@ -104,7 +108,7 @@ package final class StatusBarController: NSObject {
         let preferences = models.preferences
         var icons: [MenuBarLayout.ClickTarget] = []
         if preferences.showLyricsButton && !models.lyrics.isEnabled { icons.append(.lyricsIcon) }
-        if preferences.showLikeButton && models.likedSongs.canLikeCurrentTrack { icons.append(.likeIcon) }
+        if preferences.showLikeButton && models.likedSongs.showsLikeButton { icons.append(.likeIcon) }
         return icons
     }
 

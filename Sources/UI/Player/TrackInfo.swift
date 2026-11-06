@@ -84,7 +84,7 @@ struct TrackInfo: View {
                 }
             }
             Spacer(minLength: 0)
-            if likedSongs.canLikeCurrentTrack && account.isConnected {
+            if likedSongs.showsLikeButton {
                 LikeButton(likedSongs: likedSongs, size: 22)
             }
         }

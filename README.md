@@ -57,20 +57,6 @@ Every visual is drawn from the same audio and the same analysis pass.
 - **Tempo:** onset strength resampled onto a 100 Hz grid, autocorrelated over the last 8 seconds between 60 and 200 BPM, re-estimated twice a second.
 - **It is Spotify's output** that gets measured, after Spotify's volume and **Normalize volume** settings — which is why the loudness meter asks for 100%.
 
-### Where each visual comes from
-
-Nine visuals, every one of them a reading of that same frame:
-
-- **Spectrum analyzer** — the 192-band curve itself, with a peak line that holds and sinks slowly.
-- **Spectrogram** — one 512-row column per 1/60 s, scrolled right to left; about 9 seconds fit across.
-- **Spectral waterfall** — the analyzer curve saved 20 times a second, the last 48 of them stacked front to back (~2.4 s).
-- **Oscilloscope** — the triggered 256-point waveform, blended with the previous frame so it glides.
-- **Wavetable** — that same waveform saved 30 times a second, the last 60 stacked (~2 s).
-- **Vectorscope** — 512 recent left/right sample pairs, scaled so the loudest sits near the edge, with the correlation and balance measured on every chunk.
-- **Level meters** — the per-chunk peak and RMS in dBFS, with studio ballistics (24 dB/s fall, ~300 ms RMS, a 1.5 s peak hold).
-- **Loudness (LUFS)** — the K-weighted 100 ms hops: momentary, short-term, the gated integrated value, and a minute of short-term history.
-- **Chromagram** — the 12 note strengths, kept 15 times a second for ~8 seconds, with the key read from ~15 s of them and the tempo from the onset autocorrelation.
-
 ## Requirements
 
 - macOS 13 or later. The visualizer needs macOS 14.2 or later.

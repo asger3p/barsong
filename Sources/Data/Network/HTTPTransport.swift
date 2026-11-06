@@ -1,5 +1,11 @@
 import Foundation
 
+/// How Barsong identifies itself to every service it calls. Kept in one place so no caller
+/// can drift into claiming to be something it isn't.
+enum HTTPClientIdentity {
+    static let userAgent = "Barsong/1.0 (macOS menu bar app)"
+}
+
 /// Sends HTTP requests. Swapped for a stub in tests.
 package protocol HTTPTransport: Sendable {
     func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)

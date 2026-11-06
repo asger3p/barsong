@@ -62,6 +62,10 @@ struct NetEaseLyricsProviderTests {
         #expect(transport.requests[0].queryItems["s"] == "Artist Song")
         #expect(transport.requests[1].queryItems["id"] == "2") // same length and artist
         #expect(fetched == FetchedLyrics(synced: "[00:01.00] Hello", plain: nil))
+        // Both requests name the app, rather than posing as a browser.
+        for request in transport.requests {
+            #expect(request.value(forHTTPHeaderField: "User-Agent") == HTTPClientIdentity.userAgent)
+        }
     }
 
     @Test func skipsInstrumentals() async {

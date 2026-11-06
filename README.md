@@ -116,7 +116,7 @@ Liked Songs and the artist and album links use the Spotify Web API. Each user si
 Barsong talks to four places, and only these:
 
 - **[LRCLIB](https://lrclib.net)** (lyrics): the artist, title, album and length of the current song. If that finds no synced lyrics, a second request sends just the artist and title to its search endpoint. These requests identify themselves as `Barsong/1.0`.
-- **NetEase** (fallback lyrics, only when LRCLIB has none): the artist and title as one search string, then the id of the matching song — no album, no length. Note that these requests send a generic browser User-Agent rather than naming Barsong.
+- **NetEase** (fallback lyrics, only when LRCLIB has none): the artist and title as one search string, then the id of the matching song — no album, no length. These requests identify themselves as `Barsong/1.0` too.
 - **Spotify's Web API** (Liked Songs, artist and album links): track, artist and album ids, with the token from your own developer app.
 - **Spotify's image servers**: the cover, from whatever URL Spotify reports for the current track.
 

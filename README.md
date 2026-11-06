@@ -9,29 +9,22 @@ Barsong is an independent project, not affiliated with or endorsed by Spotify. T
 ## Features
 
 **Menu bar**
-- The album cover and "Artist – Title" (or "Title – Artist", title only, or just the cover). A pause badge shows while paused.
-- One click on **+** adds the song to Liked Songs; the check mark removes it. The button only appears once a Spotify account is connected (see [Connect your Spotify account](#connect-your-spotify-account)).
+- The album cover and "Artist – Title", with a pause badge while paused. The text can be reordered, shortened or hidden, and sits on an optional pill.
+- One click on **+** adds the song to Liked Songs; the check mark removes it. It appears once a Spotify account is connected (see [Connect your Spotify account](#connect-your-spotify-account)).
 - A lyrics button turns the floating lyrics on.
-- Optional pill background, plain or tinted with the cover's colours.
 
 **Player**
 - Play/pause, previous, next, shuffle, repeat, a scrubber, and Spotify's own volume.
-- Click the title or cover to open the song in Spotify, and the artist or album to open those.
-- A copy button puts the song's open.spotify.com link on your clipboard.
-- Full and compact (one-row) layouts, and a pin to keep the player open.
-- Pick any accent colour, or keep Spotify green.
+- Click the title or cover to open the song in Spotify, the artist or album to open those, or the copy button for its link.
+- Full and compact layouts, a pin to keep the player open, and your choice of accent colour.
 
 **Lyrics**
-- Synced lyrics in a floating pill below the menu bar, showing 1, 2, 3 or 5 lines.
-- Click a line to jump to it in the song.
-- Expand to a full-height view of the whole song.
-- Dark, light, glass or album-coloured styles.
-- Drag them anywhere, and reset to a default position.
-- The timing can be nudged earlier or later.
-- Lyrics come from LRCLIB, with NetEase as a fallback.
+- Synced lyrics in a floating pill below the menu bar, draggable anywhere, in four styles.
+- Click a line to jump to it, or expand to a full-height view of the whole song.
+- From LRCLIB, with NetEase as a fallback. The timing can be nudged if it drifts.
 
 **Visualizer**
-- Studio-style analysis of Spotify's audio beside the player: spectrum, spectrogram, scopes, level and loudness meters, and key. See [Visualizer](#visualizer) below.
+- Nine studio-style views of Spotify's audio beside the player: spectrum, spectrogram, scopes, level and loudness meters, and key. See [Visualizer](#visualizer) below.
 
 **General**
 - Open at login.
@@ -40,28 +33,27 @@ Barsong is an independent project, not affiliated with or endorsed by Spotify. T
 
 ![Full screen: the player beside all nine visuals, from the spectrum analyzer to the chromagram](docs/screenshots/full-screen-visualizers.jpg)
 
-The visualizer column sits to the right of the full player. Switch visuals with the **‹ ›** arrows above it, by clicking the visual itself, or under Settings → Player.
+The visualizer column sits to the right of the full player. Click a visual, or use the **‹ ›** arrows above it, to switch.
 
-- **Full screen:** hover the visual and click the expand button in its corner. It opens a full-screen view with the player on the left and every visual at once. Click a visual to show it large; **All visuals** goes back to the grid; Esc leaves full screen.
+- **Full screen:** the expand button in a visual's corner opens a full-screen view, with the player on the left and every visual at once.
 - **Pausing:** freezes the picture exactly as it was, so you can study it, and listening stops until you press play.
-- **Requirements:** macOS 14.2 or later and the System Audio Recording permission (see [First run](#first-run)).
 
 ### How the data is collected
 
-- **What a tap is:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes. The system hands Barsong a copy of the audio those processes send to your output device: nothing is heard through a microphone, no other app's sound is in the stream, and Spotify plays on untouched.
+- **What a tap is:** a Core Audio process tap on Spotify's own processes. The system hands Barsong a copy of the audio those processes send to your output device: nothing is heard through a microphone, no other app's sound is in the stream, and Spotify plays on untouched.
 - **When it listens:** only while a visual is on screen and the music plays. Pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
-- **What is done with it:** every visual is drawn from one analysis pass over that audio — the levels and the loudness meter from each chunk as it arrives, the spectrum, waveform, spectrogram, notes, key and tempo from short windows of it (4096 samples for the spectrum and waveform; 16384, 8192 and 4096 together for the spectrogram and the notes), up to sixty times a second.
+- **What is done with it:** every visual is drawn from one analysis pass over that audio — the levels and the loudness meter from each chunk as it arrives, the spectrum, waveform, spectrogram, notes, key and tempo from short windows of it, up to sixty times a second.
 - **What gets measured** is Spotify's output, after its volume and **Normalize volume** settings — which is why the loudness meter asks for 100%.
 
 ## Requirements
 
-- macOS 13 or later. The visualizer needs macOS 14.2 or later.
+- macOS 13 or later. The visualizer needs macOS 14.2 or later and the System Audio Recording permission.
 - The Spotify desktop app.
 - For Liked Songs and the artist and album links: a Spotify account that can create a developer app. Spotify currently requires Premium for that.
 
 ## Install
 
-Barsong is built from source. Clone it and run the installer:
+Clone it and run the installer:
 
 ```sh
 git clone https://github.com/asger3p/barsong.git
@@ -86,9 +78,9 @@ Both can be changed later in macOS System Settings → Privacy & Security.
 
 Liked Songs and the artist and album links use the Spotify Web API. Each user signs in through a small Spotify app of their own, so there's no shared key and no user limit. Barsong walks you through it under Settings (gear icon) → **Spotify Account**:
 
-1. **Create a Spotify app.** "Open Spotify dashboard" takes you to the form. Copy in the app name and the redirect URI (`http://127.0.0.1:43117/callback`) with the copy buttons, tick **Web API** and save. The account creating the app needs Spotify Premium.
+1. **Create a Spotify app.** "Open Spotify dashboard" takes you to the form. Copy in the app name and the redirect URI (`http://127.0.0.1:43117/callback`) with the copy buttons, tick **Web API** and save.
 2. **Paste its Client ID**, found under the app's Settings. Barsong connects as soon as a complete Client ID is pasted.
-3. **Approve in the browser.** After that, Barsong keeps you signed in.
+3. **Approve in the browser.** This starts by itself once the Client ID is in; the **Connect** button starts it again if it doesn't. After that, Barsong keeps you signed in.
 
 ## Privacy
 

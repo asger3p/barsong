@@ -5,7 +5,7 @@ import Foundation
 /// (the same fallback LyricFever uses).
 package struct NetEaseLyricsProvider: LyricsProvider {
     package let name = "NetEase"
-    private static let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+    private static let userAgent = HTTPClientIdentity.userAgent
     private static let durationTolerance: TimeInterval = 3
     /// NetEase's placeholder for instrumentals ("pure music, please enjoy").
     private static let instrumentalMarker = "纯音乐"

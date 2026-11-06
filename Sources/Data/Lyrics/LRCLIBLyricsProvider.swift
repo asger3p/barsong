@@ -5,7 +5,7 @@ import Foundation
 package struct LRCLIBLyricsProvider: LyricsProvider {
     package let name = "LRCLIB"
     /// LRCLIB asks clients to identify themselves.
-    private static let userAgent = "Barsong/1.0 (macOS menu bar app)"
+    private static let userAgent = HTTPClientIdentity.userAgent
     /// Search results within this many seconds of the track count as the same recording.
     private static let durationTolerance: TimeInterval = 3
 

@@ -14,10 +14,10 @@ struct LikeButton: View {
         } label: {
             Image(systemName: isLiked ? "checkmark.circle.fill" : "plus.circle")
                 .font(.system(size: size))
-                .foregroundStyle(isLiked ? accent : Color.secondary)
         }
         .buttonStyle(.plain)
         .help(isLiked ? "Remove from Liked Songs" : "Add to Liked Songs")
         .pointingHandCursor()
+        .playerButtonHover(from: isLiked ? accent : .secondary, to: isLiked ? accent : .primary)
     }
 }

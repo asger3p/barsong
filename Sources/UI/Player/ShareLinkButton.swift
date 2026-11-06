@@ -17,11 +17,14 @@ struct ShareLinkButton: View {
                     .font(.system(size: 14, weight: .semibold))
                 Color.clear.frame(width: 4, height: 4)
             }
-            .foregroundStyle(isShowingConfirmation ? accent : Color.secondary)
         }
         .buttonStyle(.plain)
         .help("Copy Spotify link")
         .pointingHandCursor()
+        .playerButtonHover(
+            from: isShowingConfirmation ? accent : .secondary,
+            to: isShowingConfirmation ? accent : .primary
+        )
         .overlay(alignment: .top) {
             if isShowingConfirmation {
                 Text("Copied to clipboard")

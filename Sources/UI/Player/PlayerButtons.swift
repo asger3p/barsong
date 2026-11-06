@@ -16,11 +16,11 @@ struct ToggleButton: View {
                 Image(systemName: symbol).font(.system(size: 14, weight: .semibold))
                 Circle().frame(width: 4, height: 4).opacity(isOn ? 1 : 0)
             }
-            .foregroundStyle(isOn ? accent : Color.secondary)
         }
         .buttonStyle(.plain)
         .help(helpOverride ?? help + (isOn ? " on" : " off"))
         .pointingHandCursor()
+        .playerButtonHover(from: isOn ? accent : .secondary, to: isOn ? accent : .primary)
     }
 }
 
@@ -36,6 +36,7 @@ struct ControlButton: View {
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
+        .playerButtonHover()
     }
 }
 
@@ -50,8 +51,8 @@ struct IconButton: View {
             Image(systemName: symbol).font(.system(size: 13))
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.secondary)
         .help(help)
         .pointingHandCursor()
+        .playerButtonHover(from: .secondary)
     }
 }

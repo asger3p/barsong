@@ -17,6 +17,8 @@ final class LyricsWindowController {
     private let lyrics: LyricsSession
     private let preferences: LyricsPreferences
     private let nowPlaying: NowPlaying
+    private let likedSongs: LikedSongs
+    private let account: SpotifyAccount
     private let state = LyricsWindowState()
     private var window: NSPanel?
     private var mouseTimer: Timer?
@@ -25,10 +27,18 @@ final class LyricsWindowController {
     private var isShowingCustomCursor = false
     private var cancellables = Set<AnyCancellable>()
 
-    init(lyrics: LyricsSession, preferences: LyricsPreferences, nowPlaying: NowPlaying) {
+    init(
+        lyrics: LyricsSession,
+        preferences: LyricsPreferences,
+        nowPlaying: NowPlaying,
+        likedSongs: LikedSongs,
+        account: SpotifyAccount
+    ) {
         self.lyrics = lyrics
         self.preferences = preferences
         self.nowPlaying = nowPlaying
+        self.likedSongs = likedSongs
+        self.account = account
         BackgroundCursor.allowSettingCursorWhileInBackground()
 
         state.onDragChanged = { [weak self] in self?.dragChanged() }
@@ -127,7 +137,8 @@ final class LyricsWindowController {
         window.hidesOnDeactivate = false
         window.collectionBehavior = [.canJoinAllSpaces, .ignoresCycle]
         window.contentView = NSHostingView(rootView: LyricsWindowRootView(
-            lyrics: lyrics, preferences: preferences, nowPlaying: nowPlaying, state: state
+            lyrics: lyrics, preferences: preferences, nowPlaying: nowPlaying, state: state,
+            likedSongs: likedSongs, account: account
         ))
         self.window = window
         return window

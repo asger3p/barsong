@@ -48,7 +48,7 @@ The visualizer column sits to the right of the full player. Switch visuals with 
 
 ### How the data is collected
 
-Every visual is drawn from the same audio and the same analysis pass — one pipeline, not nine.
+Every visual is drawn from the same audio and the same analysis pass.
 
 - **Capture:** a Core Audio process tap (macOS 14.2+) on Spotify's own processes, mixed to stereo, inside a private aggregate device on your current output device. Spotify plays on untouched, nothing else is tapped, and nothing is recorded or saved. Barsong listens only while a visual is on screen and the music plays; pausing removes the tap, and a new track restarts the loudness, key and tempo measurements, which take a few seconds to settle.
 - **Every chunk of audio** (a few milliseconds, straight from the audio device): peak and RMS levels, the stereo scope's points, correlation and balance, and the loudness meter — K-weighted per sample to ITU-R BS.1770, in 100 ms hops (momentary 400 ms, short-term 3 s, gated integrated, one history point every 0.2 s).

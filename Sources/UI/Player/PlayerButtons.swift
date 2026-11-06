@@ -36,7 +36,7 @@ struct ControlButton: View {
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
-        .playerButtonHover(from: .primary.opacity(0.85))
+        .playerButtonHover()
     }
 }
 

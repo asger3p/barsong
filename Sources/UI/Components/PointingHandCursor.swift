@@ -3,10 +3,25 @@ import SwiftUI
 
 /// Shows the pointing hand cursor while hovering, to mark an element as clickable.
 ///
-/// Entering pushes the hand and leaving pops it, so neighbouring elements hand over cleanly.
-/// macOS puts the arrow back when you click, and hover events don't fire again while the
-/// mouse stays put, so the hand is set again after every click and as the mouse moves.
+/// On macOS 15 and later this is `pointerStyle(.link)`: the system owns the cursor, so
+/// SwiftUI controls no longer flicker between the hand and the arrow. Earlier versions fall
+/// back to driving `NSCursor` by hand.
 struct PointingHandCursor: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(macOS 15.0, *) {
+            content.pointerStyle(.link)
+        } else {
+            content.modifier(ManualPointingHandCursor())
+        }
+    }
+}
+
+/// Before macOS 15: entering pushes the hand and leaving pops it, so neighbouring elements
+/// hand over cleanly. macOS puts the arrow back when you click, and hover events don't fire
+/// again while the mouse stays put, so the hand is set again after every click and as the
+/// mouse moves.
+private struct ManualPointingHandCursor: ViewModifier {
     /// Long enough to swallow a gap between two hover events, short enough to feel instant
     /// when the pointer really has left.
     private static let exitDelay: TimeInterval = 0.05

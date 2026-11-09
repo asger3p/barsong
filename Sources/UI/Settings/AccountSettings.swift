@@ -23,6 +23,11 @@ struct AccountSettings: View {
                 .font(.caption2)
                 .foregroundStyle(.red)
                 .fixedSize(horizontal: false, vertical: true)
+        } else if account.isOffline {
+            Text("Offline mode — Spotify can't be reached right now.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

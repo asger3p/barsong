@@ -56,10 +56,10 @@ package final class LikedSongs: ObservableObject {
             } else {
                 try await library.save(uri)
             }
-            account.lastError = nil
+            account.noteReachable()
         } catch {
             if nowPlaying.track?.uri == uri { isCurrentTrackLiked = wasLiked }
-            account.lastError = error.localizedDescription
+            account.note(error)
         }
     }
 
@@ -70,10 +70,11 @@ package final class LikedSongs: ObservableObject {
         }
         do {
             let liked = try await library.isSaved(track.uri)
+            account.noteReachable()
             // Ignore answers for a track that's no longer playing.
             if nowPlaying.track?.uri == track.uri { isCurrentTrackLiked = liked }
         } catch {
-            account.lastError = error.localizedDescription
+            account.note(error)
         }
     }
 }

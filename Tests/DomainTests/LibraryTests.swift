@@ -43,6 +43,38 @@ struct LikedSongsTests {
         #expect(!disconnected.showsLikeButton)
     }
 
+    @Test func reportsBeingOfflineWithoutCallingItAnError() async {
+        let (likedSongs, account) = makeLikedSongs()
+        library.failure = URLError(.notConnectedToInternet)
+
+        await likedSongs.refreshCurrentTrack()
+
+        #expect(account.isOffline)
+        #expect(account.lastError == nil)
+    }
+
+    @Test func stopsSayingOfflineOnceARequestGetsThrough() async {
+        let (likedSongs, account) = makeLikedSongs()
+        library.failure = URLError(.notConnectedToInternet)
+        await likedSongs.refreshCurrentTrack()
+
+        library.failure = nil
+        await likedSongs.refreshCurrentTrack()
+
+        #expect(!account.isOffline)
+        #expect(account.lastError == nil)
+    }
+
+    @Test func stillReportsRealFailures() async {
+        let (likedSongs, account) = makeLikedSongs()
+        library.failure = TestFailure()
+
+        await likedSongs.refreshCurrentTrack()
+
+        #expect(!account.isOffline)
+        #expect(account.lastError == "Something went wrong")
+    }
+
     @Test func likingSavesTheTrack() async {
         let (likedSongs, _) = makeLikedSongs()
         await likedSongs.refreshCurrentTrack()

@@ -83,7 +83,7 @@ struct NowPlayingPanel: View {
             } else {
                 emptyState
             }
-            AccountErrorText(account: models.account)
+            AccountStatusText(account: models.account)
         }
     }
 
@@ -181,17 +181,24 @@ struct CompactPlayer: View {
     }
 }
 
-/// The last problem talking to Spotify, if any.
-struct AccountErrorText: View {
+/// How talking to Spotify is going: a problem in red, or offline in passing. Nothing when
+/// all is well.
+struct AccountStatusText: View {
     @ObservedObject var account: SpotifyAccount
 
     var body: some View {
         if let error = account.lastError {
-            Text(error)
-                .font(.caption2)
-                .foregroundStyle(.red)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            text(error, style: AnyShapeStyle(Color.red))
+        } else if account.isOffline {
+            text("Offline mode", style: AnyShapeStyle(HierarchicalShapeStyle.secondary))
         }
+    }
+
+    private func text(_ message: String, style: AnyShapeStyle) -> some View {
+        Text(message)
+            .font(.caption2)
+            .foregroundStyle(style)
+            .lineLimit(3)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

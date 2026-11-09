@@ -16,7 +16,11 @@ package final class SpotifyAccount: ObservableObject {
     /// Waiting for the user to approve access in the browser.
     @Published package private(set) var isConnecting = false
     /// Last problem talking to Spotify, shown in the panel; nil when all is well.
+    /// Never holds a connectivity failure: that is `isOffline`.
     @Published package var lastError: String?
+    /// Spotify couldn't be reached. Not a fault to report in red — Spotify plays offline
+    /// too, and Liked Songs and the links catch up once the network is back.
+    @Published package private(set) var isOffline = false
 
     /// Sent after a successful sign-in.
     package let didConnect = PassthroughSubject<Void, Never>()
@@ -37,6 +41,36 @@ package final class SpotifyAccount: ObservableObject {
 
     package var redirectURI: String { authenticator.redirectURI }
 
+    /// A request got through: whatever went wrong before no longer holds.
+    package func noteReachable() {
+        lastError = nil
+        isOffline = false
+    }
+
+    /// A request failed. Connectivity failures become `isOffline`; anything else is shown.
+    package func note(_ error: Error) {
+        if Self.isConnectivityFailure(error) {
+            isOffline = true
+            lastError = nil
+        } else {
+            isOffline = false
+            lastError = error.localizedDescription
+        }
+    }
+
+    /// The network is unreachable, rather than Spotify refusing something.
+    static func isConnectivityFailure(_ error: Error) -> Bool {
+        guard let error = error as? URLError else { return false }
+        switch error.code {
+        case .notConnectedToInternet, .networkConnectionLost, .cannotConnectToHost,
+             .cannotFindHost, .dnsLookupFailed, .timedOut, .dataNotAllowed,
+             .internationalRoamingOff, .callIsActive:
+            return true
+        default:
+            return false
+        }
+    }
+
     /// Spotify Client IDs are 32 hexadecimal characters.
     package static func looksLikeClientID(_ text: String) -> Bool {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -51,7 +85,7 @@ package final class SpotifyAccount: ObservableObject {
     }
 
     package func connect() async {
-        lastError = nil
+        noteReachable()
         clientID = clientID.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clientID.isEmpty else {
             lastError = "Paste your Client ID first."
@@ -61,12 +95,12 @@ package final class SpotifyAccount: ObservableObject {
         defer { isConnecting = false }
         do {
             try await authenticator.signIn()
-            lastError = nil
+            noteReachable()
             didConnect.send()
         } catch is CancellationError {
             // A newer sign-in took over.
         } catch {
-            lastError = error.localizedDescription
+            note(error)
         }
     }
 
